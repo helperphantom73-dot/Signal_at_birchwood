@@ -26,13 +26,25 @@ jobs:
           cp -a /tmp/godot-templates/templates/. \
             "$HOME/.local/share/godot/export_templates/4.3.stable/"
 
+      - name: Configure Android export
+        run: |
+          set -eux
+          mkdir -p "$HOME/.config/godot"
+          cp /root/.config/godot/editor_settings-4.3.tres \
+            "$HOME/.config/godot/editor_settings-4.3.tres"
+          test -d /usr/lib/jvm/java-17-openjdk-amd64
+          test -d /usr/lib/android-sdk
+          test -f /root/debug.keystore
+
       - name: Import
         run: godot --headless --import
 
       - name: Export APK
         run: |
           mkdir -p build
-          godot --headless --verbose --export-debug "Android" build/SignalAtBirchwood.apk
+          godot --headless --verbose \
+            --export-debug "Android" build/SignalAtBirchwood.apk
+          test -s build/SignalAtBirchwood.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
